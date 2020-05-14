@@ -15,33 +15,38 @@ class image {
  public:
 	/*constructores */
     image();
-    image(int num_row, int num_col, int gray_level);
+    image(int *num_row, int *num_col, int *gray_scale);
     image(const image& old_image);
 
     /*destructores */
     ~image();
 
     /*setear parametros imagen*/
-    void setimage(int num_row, int num_col, int max_val);
+    void setimage(int num_row, int num_col, int grey_scale);
 
     /*obtener parametros imagen */
-    void getimage(int &num_row, int &num_col, int &max_val);
+    void getimage(int &num_row, int &num_col, int &grey_scale);
 
     /* sobre carga operador = */
     void operator=(const image&);
 
-    /*funcion para rotar la imagen */
+    /*funcion para rotar la imagen
     void rotateimage(int theta, image& old_image);
+     */
 
-    /*setear el valor del pixel */
+    /*setear el valor del pixel
     void setPixelVal(int row, int col, int value);
+	*/
 
-    /* obtener valor de un pixel */
+    /* obtener valor de un pixel
     int getPixelVal(int row, int col);
-
+	*/
 
     bool inBounds(int row, int col);
+
+    /*
     void negateimage(image& old_image);
+	*/
 
  private :
     int rows; // number of rows

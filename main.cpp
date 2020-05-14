@@ -13,6 +13,7 @@
 #include <string>
 
 #include "cmdline.h"
+#include "image.h"
 
 
 using namespace std;
@@ -182,49 +183,38 @@ multiply(istream *is, ostream *os)
 	}
 }
 
+void get_img_from_cmd(int *num_of_row, int *num_of_col, int *grey_scale){
+	 stringstream ss;
+	 string input_line;
+	 int row =0, col =0;
+
+	 getline(*iss,input_line);// read the first line : P2
+	 if(input_line[0] != 'P' && input_line[1] != '2') {
+		   cerr << "Error: Invalid image format" <<endl;
+	 }
+	 else{
+
+	 getline(*iss,input_line);// read the second line : comment
+	 string comment = input_line;
+
+	 (*iss)   >> *num_of_col >> *num_of_row >> *grey_scale;
+
+
+}
+}
+
 int main(int argc, char * const argv[])
 {
 	cmdline cmdl(options);	// Objeto con parametro tipo option_t (struct) declarado globalmente. Ver línea 51 main.cc
 	cmdl.parse(argc, argv); // Metodo de parseo de la clase cmdline
-	const string magic_number = "P2";
 
-	 string str;
-	 int a = sizeof (*iss >> str);
+	int *num_of_row, *num_of_col, *grey_scale;
 
-	 int row =0, col =0, num_of_rows =0, num_of_cols =0, bits;
-	    stringstream ss;
-	    string inputLine;
+	get_img_from_cmd (num_of_row, num_of_col, grey_scale);
 
-	    getline(*iss,inputLine);// read the first line : P2
+	image img(num_of_row, num_of_col, grey_scale);
 
 
-
-	    if(inputLine[0] != 'P' && inputLine[1] != '2') {
-	    	cerr <<"Version error"<< endl;
-	    }
-	    cout <<"Version : "<< inputLine  << endl;
-
-	    getline(*iss,inputLine);// read the second line : comment
-	    cout <<"Comment : "<< inputLine << endl;
-
-	   //read the third line : width and height
-	    (*iss) >> num_of_cols >> num_of_rows;
-	    cout << num_of_cols <<" columns and "<< num_of_rows <<" rows"<< endl;
-
-
-	    int array[num_of_rows][num_of_cols];
-
-	    // Following lines : data
-	    for(row = 0; row < num_of_rows; ++row)
-	      for (col = 0; col < num_of_cols; ++col) *iss >> array[row][col];
-
-	    // Now print the array to see the result
-	    for(row = 0; row < num_of_rows; ++row) {
-	      for(col = 0; col < num_of_cols; ++col) {
-	        cout << array[row][col] << " ";
-	      }
-	      cout << endl;
-	    }
 	multiply(iss, oss);	    // Función externa, no es un metodo de ninguna clase o estructura usada en el código
 
 

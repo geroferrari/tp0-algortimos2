@@ -10,11 +10,12 @@ image::image(){
 }
 
 
-image::image(int num_rows, int num_cols, int gray_levels)
+image::image(int *num_row, int *num_col, int *gray_scale)
 {
-    rows = num_rows;
-    columns = num_cols;
-    greys = gray_levels;
+    rows = num_row;
+    columns = num_col;
+    greys = gray_scale;
+
     pixel_val = new int *[rows];
 
     for(int i = 0; i < rows; i++)
@@ -34,8 +35,8 @@ image::~image()
     columns = 0;
     greys = 0;
     for(int i = 0; i < rows; i++)
-        delete pixel_val [rows];
-    delete pixel_val;
+        delete[] pixel_val [rows];
+    delete[] pixel_val;
     pixel_val = 0;
 }
 
@@ -147,7 +148,7 @@ void image::negateimage(image& old_image)
 
 /**
  * based on users input and rotates it around the center of the image
- *
+ **/
 void image::rotateimage(int theta, image& old_image)
     {
         int r0, c0;
