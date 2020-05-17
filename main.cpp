@@ -217,8 +217,13 @@ int main(int argc, char * const argv[])
 	image img2(img);
 	img.getimage();
     img2.getimage();
-    img2.applyExp();
+    img2.applyExp(img);
     img2.getimage();
+	
+
+	img.getimageColor();
+	cout << endl;
+	img2.getimageColor();
 
 
 

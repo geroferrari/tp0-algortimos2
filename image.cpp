@@ -88,7 +88,7 @@ image::image(const image& old_image)
     }
 }
 
-void image::applyExp()
+void image::applyExp(const image& old_image)
 {
     double x = (double) 2/(columns-1);
     double y = (double) 2/(rows-1);
@@ -110,13 +110,26 @@ void image::applyExp()
             pixel_val[i][j].setPosition(new_value);
             if(abs(new_value.getReal()) > 1.0 || abs(new_value.getImag()) > 1.0 )
             {
-                pixel_val[i][j].setColor(15);
+                pixel_val[i][j].setColor(0);
             }
-//            for(int i = 0; i < rows; i++){
-//                for(int j = 0; j < columns; j++){
-//
-//                }
-//            }
+            else
+            {
+                double modulo_min = 10.0;
+                double modulo = 10.0;
+                for(int k = 0; k < rows; k++){
+                	for(int l = 0; l < columns; l++){
+                        modulo = sqrt(pow((new_value.getReal() - old_image.pixel_val[k][l].getPosition().getReal()),2)+pow((new_value.getImag() - old_image.pixel_val[k][l].getPosition().getImag()),2));
+                        if (modulo < modulo_min)
+                        {
+                            modulo_min = modulo;
+                            pixel_val[i][j].setColor(old_image.pixel_val[k][l].getColor()); 
+                        }
+                        
+                    }
+                }
+            }
+            
+//            
             cout << '(' << pixel_val[i][j].getPosition().getReal()<< ',' << pixel_val[i][j].getPosition().getImag()<< ')'<< " ";
         }
         cout <<endl;
@@ -164,6 +177,17 @@ void image::getimage()
     for(int r = 0; r < rows; r++){
 		 for (int c = 0; c < columns; c++) {
 			 cout << '(' << pixel_val[r][c].getPosition().getReal()<< ',' << pixel_val[r][c].getPosition().getImag()<< ')'<< ':' << ' ' << pixel_val[r][c].getColor() << " ";
+		 }
+		 cout << endl;
+	 }
+
+}
+
+void image::getimageColor()
+{
+    for(int r = 0; r < rows; r++){
+		 for (int c = 0; c < columns; c++) {
+			 cout << pixel_val[r][c].getColor() << " ";
 		 }
 		 cout << endl;
 	 }

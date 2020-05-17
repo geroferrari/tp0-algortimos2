@@ -44,7 +44,9 @@ class image {
     /* obtener valor de un pixel */
     int getPixelColor(int row, int col);
 
-    void applyExp();
+    void getimageColor();
+
+    void applyExp(const image& old_image);
 
     bool inBounds(int row, int col);
 
