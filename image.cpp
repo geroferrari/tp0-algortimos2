@@ -1,5 +1,5 @@
 #include <iostream>
-
+#include <cmath>
 #include "image.h"
 #include "complex.h"
 
@@ -81,7 +81,43 @@ image::image(const image& old_image)
         pixel_val[i] = new pixel [columns];
         for(int j = 0; j < columns; j++){
             (pixel_val[i][j]).setColor(0);
+            pixel_val[i][j].setPosition(old_image.pixel_val[i][j].getPosition());
         cout << (pixel_val[i][j]).getColor() << "  ";
+        }
+        cout <<endl;
+    }
+}
+
+void image::applyExp()
+{
+    double x = (double) 2/(columns-1);
+    double y = (double) 2/(rows-1);
+    complex x_position(x,0.0);
+    complex y_position(0.0,y);
+    complex init_position(-1, 1);
+    complex init_position_n(-1, 1);
+
+    double first_term;
+    complex second_term(0,0);
+    complex new_value(0,0);
+
+    for(int i = 0; i < rows; i++){
+        for(int j = 0; j < columns; j++){
+            first_term = exp(pixel_val[i][j].getPosition().getReal());
+            second_term.setReal(cos(pixel_val[i][j].getPosition().getImag()));
+            second_term.setImag(sin(pixel_val[i][j].getPosition().getImag()));
+            new_value = second_term * first_term;
+            pixel_val[i][j].setPosition(new_value);
+            if(abs(new_value.getReal()) > 1.0 || abs(new_value.getImag()) > 1.0 )
+            {
+                pixel_val[i][j].setColor(15);
+            }
+//            for(int i = 0; i < rows; i++){
+//                for(int j = 0; j < columns; j++){
+//
+//                }
+//            }
+            cout << '(' << pixel_val[i][j].getPosition().getReal()<< ',' << pixel_val[i][j].getPosition().getImag()<< ')'<< " ";
         }
         cout <<endl;
     }
@@ -123,11 +159,14 @@ void image::setimage(int num_rows, int num_cols, int max_val)
 /**
  * returns the number of rows, columns and gray levels
  */
-void image::getimage(int &num_rows, int &num_cols, int &grey_scale)
+void image::getimage()
 {
-    num_rows = rows;
-    num_cols = columns;
-    grey_scale = greys;
+    for(int r = 0; r < rows; r++){
+		 for (int c = 0; c < columns; c++) {
+			 cout << '(' << pixel_val[r][c].getPosition().getReal()<< ',' << pixel_val[r][c].getPosition().getImag()<< ')'<< ':' << ' ' << pixel_val[r][c].getColor() << " ";
+		 }
+		 cout << endl;
+	 }
 
 }
 

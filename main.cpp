@@ -214,7 +214,11 @@ int main(int argc, char * const argv[])
 	string comment = get_img_comment();
 	// cout << comment << endl;
 	image img(iss);
-
+	image img2(img);
+	img.getimage();
+    img2.getimage();
+    img2.applyExp();
+    img2.getimage();
 
 
 

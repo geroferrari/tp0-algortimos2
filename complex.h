@@ -30,10 +30,12 @@ public:
 	double getReal();
 	double getImag() ;
 
+	//double getAbs();
+
 	void setReal(double);
 	void setImag(double);
 
-	complex operator*(int);
+	complex operator*(double);
 	complex operator+(const complex &);
 	complex operator-(const complex &);
 	complex& operator = (const complex &);

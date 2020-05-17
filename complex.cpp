@@ -5,6 +5,7 @@
  *      Author: gerof
  */
 #include <iostream>
+#include <cmath>
 #include "complex.h"
 using namespace std;
 
@@ -36,6 +37,11 @@ double complex::getImag(){
 	return imaginario;
 }
 
+//double complex::getAbs(){
+//    double
+//}
+
+
 void complex::setReal(double xx){
 	real=xx;
 }
@@ -45,7 +51,7 @@ void complex::setImag(double yy){
 }
 
 
-complex complex:: operator*(int c){
+complex complex:: operator*(double c){
 	return complex (real * c, imaginario *c );
 }
 

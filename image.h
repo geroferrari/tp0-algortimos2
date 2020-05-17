@@ -19,9 +19,8 @@ class image {
 	/*constructores */
     image();
     image(const int ,const int , const int );
-    image(const image& old_image);
     image(istream *is);
-
+    image(const image& old_image);
     /*destructores */
     ~image();
 
@@ -29,7 +28,7 @@ class image {
     void setimage(int num_row, int num_col, int grey_scale);
 
     /*obtener parametros imagen */
-    void getimage(int &num_row, int &num_col, int &grey_scale);
+    void getimage();
 
     /* sobre carga operador = */
     void operator=(const image&);
@@ -45,8 +44,7 @@ class image {
     /* obtener valor de un pixel */
     int getPixelColor(int row, int col);
 
-
-
+    void applyExp();
 
     bool inBounds(int row, int col);
 
