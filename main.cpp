@@ -212,23 +212,17 @@ int main(int argc, char * const argv[])
 
 	validate_img_format();
 	string comment = get_img_comment();
-	// cout << comment << endl;
-	image img(iss);
-	image img2(img);
-	img.getimage();
-    img2.getimage();
-    img2.applyExp(img);
-    img2.getimage();
-	
 
-	img.getimageColor();
-	cout << endl;
-	img2.getimageColor();
+	/* en el objeto img tengo la imagen original con la
+	  escala de grises y  las posiciones complejas */
 
+	image img_origin(iss);
 
-
-
-
+	/* creo la imagen de destino del mismo tamaño que la original,
+	 * la relleno con 0
+	 */
+	image img_destin(img_origin);
+	img_destin.Texp(img_origin);
 
 
 	multiply(iss, oss);	    // Función externa, no es un metodo de ninguna clase o estructura usada en el código

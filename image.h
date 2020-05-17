@@ -19,8 +19,9 @@ class image {
 	/*constructores */
     image();
     image(const int ,const int , const int );
-    image(istream *is);
     image(const image& old_image);
+    image(istream *is);
+
     /*destructores */
     ~image();
 
@@ -28,10 +29,14 @@ class image {
     void setimage(int num_row, int num_col, int grey_scale);
 
     /*obtener parametros imagen */
-    void getimage();
+    void getimage(int &num_row, int &num_col, int &grey_scale);
 
     /* sobre carga operador = */
     void operator=(const image&);
+
+
+    image operator*(int);
+
 
     /*funcion para rotar la imagen
     void rotateimage(int theta, image& old_image);
@@ -44,9 +49,8 @@ class image {
     /* obtener valor de un pixel */
     int getPixelColor(int row, int col);
 
-    void getimageColor();
 
-    void applyExp(const image& old_image);
+
 
     bool inBounds(int row, int col);
 
@@ -65,6 +69,7 @@ class image {
 
     void setGreys(int &);
 
+    void Texp(const image&);
 
 
  private :

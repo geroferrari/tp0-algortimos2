@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cmath>
 #include "complex.h"
+
 using namespace std;
 
 complex ::complex (){
@@ -37,11 +38,6 @@ double complex::getImag(){
 	return imaginario;
 }
 
-//double complex::getAbs(){
-//    double
-//}
-
-
 void complex::setReal(double xx){
 	real=xx;
 }
@@ -51,21 +47,37 @@ void complex::setImag(double yy){
 }
 
 
-complex complex:: operator*(double c){
+complex complex:: operator*(int c){
 	return complex (real * c, imaginario *c );
 }
 
-complex complex::operator+(const complex &d){
-	return complex(real + d.real , imaginario + d.imaginario );
-}
-complex complex::operator-(const complex &e){
-	return complex(real - e.real , imaginario - e.imaginario);
+complex complex:: operator*(double &c){
+	return complex (real * c, imaginario *c );
 }
 
 
-complex& complex ::operator= (const complex & b){
-	real = b.real;
-	imaginario= b.imaginario;
+
+complex complex:: operator*( complex &c){
+	return complex (real * c.real, imaginario *c.imaginario );
+}
+
+// a=b+c
+// destino.Exp(origen)
+
+complex complex::operator+(const complex &c){
+	return complex(real + c.real , imaginario + c.imaginario );
+}
+complex complex::operator-(const complex &c){
+	return complex(real - c.real , imaginario - c.imaginario);
+}
+
+double complex::C_abs(){
+	return  (double)sqrt(real * real + imaginario * imaginario);
+}
+
+complex& complex ::operator= (const complex & c){
+	real = c.real;
+	imaginario= c.imaginario;
 return *this;
 }
 
