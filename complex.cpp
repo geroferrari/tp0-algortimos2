@@ -4,8 +4,12 @@
  *  Created on: 10 may. 2020
  *      Author: gerof
  */
-
+#include <iostream>
+#include <cmath>
 #include "complex.h"
+
+using namespace std;
+
 
 complex ::complex (){
 	real=0.0;
@@ -17,13 +21,14 @@ complex ::complex (const complex & c){
 	imaginario=c.imaginario;
 }
 
-complex ::complex (double a, double b){
+complex ::complex (const double& a, const double& b){
 	real=a;
 	imaginario=b;
 }
 
 complex:: ~complex(){
-
+	real = 0;
+	imaginario =0;
 }
 
 double complex::getReal(){
@@ -34,26 +39,83 @@ double complex::getImag(){
 	return imaginario;
 }
 
-void complex::setReal(double xx){
+void complex::setReal(const double & xx){
 	real=xx;
 }
 
-void complex::setImag(double yy){
+void complex::setImag(const double & yy){
 	imaginario=yy;
 }
 
-complex complex:: sumar (const complex &r){
-	return complex (real+r.real , imaginario+r.imaginario);
+
+complex complex:: operator*(const int & c){
+	return  complex (real *c, imaginario *c );
 }
 
-complex complex:: sumar (double f){
-	return complex (real+f, imaginario);
+complex complex:: operator*(const double &c){
+	return complex (real * c, imaginario *c );
 }
 
-complex& complex ::operator= (const complex & b){
-	real = b.real;
-	imaginario= b.imaginario;
+
+
+complex complex:: operator*(const complex &c){
+	return complex (real * c.real, imaginario *c.imaginario );
+}
+
+// a=b+c
+// destino.Exp(origen)
+
+complex complex::operator+(const complex &c){
+	return complex(real + c.real , imaginario + c.imaginario );
+}
+complex complex::operator-(const complex &c){
+	return complex(real - c.real , imaginario - c.imaginario);
+}
+
+double complex::C_abs(){
+	return  sqrt(real * real + imaginario * imaginario);
+}
+
+double complex::C_arg(){
+	if (real > 0) {
+		return atan(imaginario/real);
+	}
+	else if (real < 0){
+		if(imaginario >=0){
+			return (atan(imaginario/real) + M_PI);
+		}
+		else if (imaginario <0){
+			return (atan(imaginario/real) - M_PI);
+		}
+	}
+	else if (real == 0) {
+		if(imaginario == 0){
+			return 0.0;
+		}
+		else if (imaginario > 0){
+			return (M_PI/2);
+		}
+		else if (imaginario < 0) {
+			return  (-M_PI/2);
+		}
+	  }
+}
+
+void complex::C_exp(const complex & c){
+	real = exp(c.real)*cos(c.imaginario);
+	imaginario = exp(c.real)*sin(c.imaginario);
+}
+
+void complex::ln(complex c){
+	real = log(c.C_abs());
+	imaginario = c.C_arg();
+}
+
+complex& complex ::operator= (const complex & c){
+	real = c.real;
+	imaginario= c.imaginario;
 return *this;
 }
+
 
 
