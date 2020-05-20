@@ -7,6 +7,10 @@
 
 #ifndef complex_INCLUDED
 #define complex_INCLUDED
+#include <iostream>
+using namespace std;
+
+
 
 class complex {
 private:
@@ -16,7 +20,7 @@ private:
 public:
 	/*CONSTRUCTORES */
 	complex();
-	complex(double , double );
+	complex(const double &, const double &);
 	complex(const complex &);
 
 	/*DESTRUCTOR */
@@ -26,12 +30,22 @@ public:
 	double getReal();
 	double getImag() ;
 
-	void setReal(double);
-	void setImag(double);
+	void setReal(const double &);
+	void setImag(const double &);
 
-	complex sumar (const complex &);
-	complex sumar (double);
+	double C_abs();
+	double C_arg();
+	void C_exp(const complex &);
+	void ln(complex);
+
+	complex operator*(const double &);
+	complex operator*(const complex &);
+	complex operator*(const int &);
+	complex operator+(const complex &);
+	complex operator-(const complex &);
 	complex& operator = (const complex &);
+
+
 };
 
 #endif
