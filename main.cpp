@@ -11,8 +11,14 @@
 #include <sstream>
 #include <cstdlib>
 #include <string>
+#include <iostream>
+#include <ctime>
+
 
 #include "cmdline.h"
+#include "image.h"
+#include "complex.h"
+#include "pixel.h"
 
 
 using namespace std;
@@ -58,7 +64,7 @@ static option_t options[] = {
 	{0, },
 };
 
-static int factor;
+static function factor;
 static istream *iss = 0;	// Input Stream (clase para manejo de los flujos de entrada)
 static ostream *oss = 0;	// Output Stream (clase para manejo de los flujos de salida)
 static fstream ifs; 		// Input File Stream (derivada de la clase ifstream que deriva de istream para el manejo de archivos)
@@ -125,13 +131,13 @@ static void
 opt_factor(string const &arg)
 {
 	istringstream iss(arg);
-
+	string aux;
 	// Intentamos extraer el factor de la línea de comandos.
 	// Para detectar argumentos que únicamente consistan de
 	// números enteros, vamos a verificar que EOF llegue justo
 	// después de la lectura exitosa del escalar.
 	//
-	if (!(iss >> factor)
+	if (!(iss >> aux)
 	    || !iss.eof()) {
 		cerr << "non-integer factor: "
 		     << arg
@@ -145,6 +151,26 @@ opt_factor(string const &arg)
 		     << endl;
 		exit(1);
 	}
+
+	if(aux == "z"){
+		factor = z;
+	} else if (aux == "exp_z"){
+		factor = exp_z;
+	} else if (aux == "ln_z"){
+		factor = ln_z;
+	} else if (aux == "exp_add_ln"){
+		factor = exp_add_ln;
+	} else if (aux == "negate"){
+		factor = negative;
+	} else {
+		cerr << "non-defined function: "
+		     << arg
+		     << "."
+			 << "candidates are z, exp_z, ln_z, exp_add_ln, negative"
+		     << endl;
+	}
+
+
 }
 
 static void
@@ -182,50 +208,53 @@ multiply(istream *is, ostream *os)
 	}
 }
 
+
+/* valida que la imagen sea del tipo P2 */
+int validate_img_format(){
+	 string input_line;
+	 getline(*iss,input_line);// lee la primera linea : P2
+
+	 if(input_line[0] != 'P' && input_line[1] != '2') {
+		   cerr << "Error: Invalid image format" <<endl;
+		  exit(1);
+	 }
+	return 0;
+}
+
+
 int main(int argc, char * const argv[])
 {
+
 	cmdline cmdl(options);	// Objeto con parametro tipo option_t (struct) declarado globalmente. Ver línea 51 main.cc
 	cmdl.parse(argc, argv); // Metodo de parseo de la clase cmdline
-	const string magic_number = "P2";
-
-	 string str;
-	 int a = sizeof (*iss >> str);
-
-	 int row =0, col =0, num_of_rows =0, num_of_cols =0, bits;
-	    stringstream ss;
-	    string inputLine;
-
-	    getline(*iss,inputLine);// read the first line : P2
 
 
+	/***************************************************/
+	/* utilizado para calcular el tiempo de ejecucion */
+	unsigned t0, t1;
+	t0=clock();
+	/***************************************************/
 
-	    if(inputLine[0] != 'P' && inputLine[1] != '2') {
-	    	cerr <<"Version error"<< endl;
-	    }
-	    cout <<"Version : "<< inputLine  << endl;
+	/* valido que la imagen sea la adecuada */
+	if (validate_img_format() != 0){
+		exit(1);
+	}
 
-	    getline(*iss,inputLine);// read the second line : comment
-	    cout <<"Comment : "<< inputLine << endl;
+	image img_origin(iss); // crea la imagen a partir de lo que lee por cmdline
+	image img_destin(img_origin); // crea la imagen de salida copiando la de entrada
 
-	   //read the third line : width and height
-	    (*iss) >> num_of_cols >> num_of_rows;
-	    cout << num_of_cols <<" columns and "<< num_of_rows <<" rows"<< endl;
+	img_destin.transformation(img_origin , factor);  // se elige que funcion se aplicará a partir del valor de factor
 
+	img_destin.export_to_file(oss); // se guarda el archivo en  la imagen de salida
 
-	    int array[num_of_rows][num_of_cols];
-
-	    // Following lines : data
-	    for(row = 0; row < num_of_rows; ++row)
-	      for (col = 0; col < num_of_cols; ++col) *iss >> array[row][col];
-
-	    // Now print the array to see the result
-	    for(row = 0; row < num_of_rows; ++row) {
-	      for(col = 0; col < num_of_cols; ++col) {
-	        cout << array[row][col] << " ";
-	      }
-	      cout << endl;
-	    }
 	multiply(iss, oss);	    // Función externa, no es un metodo de ninguna clase o estructura usada en el código
 
+	/***************************************************/
+	/* utilizado para calcular el tiempo de ejecucion */
+	t1 = clock();
+
+	double time = (double(t1-t0)/CLOCKS_PER_SEC);
+	cout << "Execution Time: " << time << endl;
+	/***************************************************/
 
 }
