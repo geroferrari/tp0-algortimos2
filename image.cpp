@@ -40,8 +40,9 @@ image::image(istream *is){
 	string hashtag;
 	/* primero se verifica si la imagen posee comentario */
 	(*is) >> hashtag;
-	if (hashtag == "#"){
+	if (hashtag[0] == '#'){
 		 getline(*is,comment); // si tiene comentario se lo guarda
+		 comment = hashtag + comment;
 		 (*is) >> columns; // obtiene el tamaño de las columnas
 	}
 	 else{
@@ -79,6 +80,7 @@ image::image(istream *is){
 image::image(const image& old_image)
 {
 	/* copio los valores de la imagen pasada en la nueva imagen */
+	comment = old_image.comment;
     rows = old_image.rows;
     columns = old_image.columns;
     greys = old_image.greys;
@@ -348,7 +350,7 @@ void image::negateimage()
 
 void image::export_to_file(ostream *os){
 	(*os) << "P2" <<endl;
-	(*os) << "# " << comment <<endl;
+	(*os) << comment <<endl;
 	(*os) << columns << " " << rows << endl;
 	(*os) << greys << endl;
 

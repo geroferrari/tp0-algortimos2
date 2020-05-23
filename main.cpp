@@ -210,15 +210,13 @@ multiply(istream *is, ostream *os)
 
 
 /* valida que la imagen sea del tipo P2 */
-int validate_img_format(){
+void validate_img_format(){
 	 string input_line;
 	 getline(*iss,input_line);// lee la primera linea : P2
-
-	 if(input_line[0] != 'P' && input_line[1] != '2') {
+	 if(input_line[0] != 'P' || input_line[1] != '2') {
 		   cerr << "Error: Invalid image format" <<endl;
 		  exit(1);
 	 }
-	return 0;
 }
 
 
@@ -236,9 +234,7 @@ int main(int argc, char * const argv[])
 	/***************************************************/
 
 	/* valido que la imagen sea la adecuada */
-	if (validate_img_format() != 0){
-		exit(1);
-	}
+	validate_img_format();
 
 	image img_origin(iss); // crea la imagen a partir de lo que lee por cmdline
 	image img_destin(img_origin); // crea la imagen de salida copiando la de entrada
