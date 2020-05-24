@@ -178,7 +178,7 @@ void image::exp_z(const image & origen)
     	minimum = sqrt(2)*1.0/(columns-1);
     }
 
-    for(int i = 0; i < rows; i++){
+    for(int i = 0; i < rows; i++){ //Hace una busqueda binaria para reales e imaginarios, para cada pixel
         for(int j = 0; j < columns; j++){
         	new_value.C_exp(pixel_val[i][j].getPosition());
             if(abs(new_value.getReal()) <= 1.0 && abs(new_value.getImag()) <= 1.0)
@@ -190,6 +190,8 @@ void image::exp_z(const image & origen)
 
 				int f=-1,h=-1;
 				int first_real, last_real, mid_real, first_imag, last_imag, mid_imag;
+
+				/*Se hace busqueda binaria para ubicacion en filas*/
 
 				first_imag = 0;
 				last_imag = rows - 1;
@@ -213,13 +215,13 @@ void image::exp_z(const image & origen)
 				}
 				if(first_imag>last_imag)
 				{
-					if (first_imag > (rows-1))
+					if (first_imag > (rows-1)) // Para evitar que acceda a una memoria no permitida
 					{
 						first_imag = first_imag - 1;
 					}
 					distance1 = abs(origen.pixel_val[first_imag][0].getPosition().getImag() - imag_part);
 					distance2 = abs(origen.pixel_val[last_imag][0].getPosition().getImag() - imag_part);
-					if(distance1<=distance2)
+					if(distance1<=distance2) // Se compara con que fila se esta mas cerca
 					{
 						f = first_imag;
 					}
@@ -229,6 +231,8 @@ void image::exp_z(const image & origen)
 					}
 					
 				}
+
+				/*Se hace busqueda binaria para ubicacion en columnas*/
 
 				first_real = 0;
 				last_real = columns - 1;
@@ -254,7 +258,7 @@ void image::exp_z(const image & origen)
 				{
 					distance1 = abs(origen.pixel_val[0][first_real].getPosition().getReal() - real_part);
 					distance2 = abs(origen.pixel_val[0][last_real].getPosition().getReal() - real_part);
-					if(distance1<=distance2)
+					if(distance1<=distance2) // Se compara con que columna se esta mas cerca
 					{
 						h = first_real;
 					}
@@ -276,8 +280,6 @@ void image::exp_z(const image & origen)
 }
 
 
-
-
 void image::ln_z(const image & origen)
 {
     double minimum;
@@ -289,7 +291,7 @@ void image::ln_z(const image & origen)
     	minimum = 2.0/(columns-1);
     }
 
-    for(int i = 0; i < rows; i++){
+    for(int i = 0; i < rows; i++){ // Se realiza busqueda binaria similar a la de la exponencial
         for(int j = 0; j < columns; j++){
         	new_value.ln(pixel_val[i][j].getPosition());
             if(abs(new_value.getReal()) <= 1.0 && abs(new_value.getImag()) <= 1.0)
@@ -297,9 +299,6 @@ void image::ln_z(const image & origen)
 				double real_part = new_value.getReal();
 				double imag_part = new_value.getImag();
 				double distance1, distance2;
-
-				//cout << real_part << endl;
-				//cout << imag_part << endl;
 
 				int f=-1,h=-1;
 				int first_real, last_real, mid_real, first_imag, last_imag, mid_imag;
@@ -309,7 +308,6 @@ void image::ln_z(const image & origen)
 				mid_imag = (first_imag + last_imag)/2;
 				while(first_imag<=last_imag)
 				{
-					//cout << mid_imag << endl;
 					if(origen.pixel_val[mid_imag][0].getPosition().getImag() > imag_part)
 					{
 						first_imag = mid_imag + 1;
@@ -380,7 +378,6 @@ void image::ln_z(const image & origen)
 				}
 
 				if (f >= 0 && h >= 0) {
-					//cout << f << ' ' << h << endl;
             	 	pixel_val[i][j].setColor(origen.pixel_val[f][h].getColor());
             	}
 
@@ -478,92 +475,4 @@ int image::getPixelColor(const int num_row, const int num_col)
 
     return pixel_val[num_row][num_col].getColor();
 }
-/**
- * sets the gray value of a specific pixel
- *
-void image::setPixelColor(int row, int col, int value)
-{
-    pixel_val[row][col] = value;
-}
-*/
-/**
- * checks to see if a pixel is within the image, returns true or false
 
-bool image::inBounds(int row, int col)
-{
-    if(row >= rows || row < 0 || col >=columns || col < 0)
-        return false;
-    //else
-    return true;
-}
-*/
-
-
-
-
-
-
-/**
- * negates image
- *
-void image::negateimage(image& old_image)
-{
-    int rows, cols, gray;
-     = N;
-    cols = M;
-    gray = Q;
-
-    image tempimage(N,M,Q);
-
-    for(int i = 0; i < rows; i++)
-    {
-        for(int j = 0; j < cols; j++)
-            tempimage.pixelVal[i][j] = -(pixelVal[i][j]) + 255;
-    }
-
-    old_image = tempimage;
-}
- */
-
-/**
- * based on users input and rotates it around the center of the image
- **/
-/*void image::rotateimage(int theta, image& old_image)
-    {
-        int r0, c0;
-        int r1, c1;
-        int rows, cols;
-        rows = old_image.N;
-        cols = old_image.M;
-        image tempimage(rows, cols, old_image.Q);
-
-        float rads = (theta * 3.14159265)/180.0;
-
-        r0 = rows / 2;
-        c0 = cols / 2;
-
-        for(int r = 0; r < rows; r++)
-        {
-        for(int c = 0; c < cols; c++)
-        {
-            r1 = (int) (r0 + ((r - r0) * cos(rads)) - ((c - c0) * sin(rads)));
-            c1 = (int) (c0 + ((r - r0) * sin(rads)) + ((c - c0) * cos(rads)));
-
-            if(inBounds(r1,c1))
-            {
-                tempimage.pixelVal[r1][c1] = old_image.pixelVal[r][c];
-            }
-        }
-        }
-
-        for(int i = 0; i < rows; i++)
-        {
-        for(int j = 0; j < cols; j++)
-        {
-            if(tempimage.pixelVal[i][j] == 0)
-                tempimage.pixelVal[i][j] = tempimage.pixelVal[i][j+1];
-        }
-        }
-        old_image = tempimage;
-    }
-   */
