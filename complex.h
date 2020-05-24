@@ -1,38 +1,43 @@
 /*
  * complex.h
  *
+ *  Created on: 10 may. 2020
+ *      Author: gerof
  */
 
 #ifndef complex_INCLUDED
 #define complex_INCLUDED
-
 #include <iostream>
 using namespace std;
 
+
+
 class complex {
+private:
+	double real;
+	double imaginario;
 
 public:
-	/***************** CONSTRUCTORES  *****************/
-	complex(); // constructor por defecto
+	/*CONSTRUCTORES */
+	complex();
 	complex(const double &, const double &);
-	complex(const complex &); //constructor por copia
+	complex(const complex &);
 
-	/********************* DESTRUCTOR  ****************/
+	/*DESTRUCTOR */
 	~complex() ;
 
-	/****************** GETTERS AND SETTERS ***************/
-	double getReal();  //devuelve parte real
-	void setReal(const double &); //setea parte real
-	double getImag() ; //devuelve parte compleja
-	void setImag(const double &); //setea parte compleja
+	/*FUNCIONES */
+	double getReal();
+	double getImag() ;
 
-	/******************* FUNCIONES MATEMATICAS ********************/
-	double C_abs(); // devuelve el modulo del complejo
-	double C_arg(); // devuelve el argumento del complejo
-	void C_exp(const complex &); // calcula la exponencial compleja
-	void ln(complex); // calcula el ln complejo
+	void setReal(const double &);
+	void setImag(const double &);
 
-	/********************** SOBRECARGA DE OPERADORES ***************/
+	double C_abs();
+	double C_arg();
+	void C_exp(const complex &);
+	void ln(complex);
+
 	complex operator*(const double &);
 	complex operator*(const complex &);
 	complex operator*(const int &);
@@ -40,9 +45,7 @@ public:
 	complex operator-(const complex &);
 	complex& operator = (const complex &);
 
-private:
-	double real;
-	double imaginario;
+
 };
 
 #endif

@@ -10,7 +10,7 @@
 
 using namespace std;
 
-/*********************** CONSTRUCTORES **********************/
+
 complex ::complex (){
 	real=0.0;
 	imaginario=0.0;
@@ -26,13 +26,11 @@ complex ::complex (const double& a, const double& b){
 	imaginario=b;
 }
 
-/*************************** DESTRUCTOR *********************/
 complex:: ~complex(){
 	real = 0;
 	imaginario =0;
 }
 
-/****************** GETTERS AND SETTERS *********************/
 double complex::getReal(){
 	return real;
 }
@@ -49,7 +47,7 @@ void complex::setImag(const double & yy){
 	imaginario=yy;
 }
 
-/********************* SOBRECARGA DE OPERADORES *************/
+
 complex complex:: operator*(const int & c){
 	return  complex (real *c, imaginario *c );
 }
@@ -58,9 +56,14 @@ complex complex:: operator*(const double &c){
 	return complex (real * c, imaginario *c );
 }
 
+
+
 complex complex:: operator*(const complex &c){
 	return complex (real * c.real, imaginario *c.imaginario );
 }
+
+// a=b+c
+// destino.Exp(origen)
 
 complex complex::operator+(const complex &c){
 	return complex(real + c.real , imaginario + c.imaginario );
@@ -69,21 +72,10 @@ complex complex::operator-(const complex &c){
 	return complex(real - c.real , imaginario - c.imaginario);
 }
 
-complex& complex ::operator= (const complex & c){
-	real = c.real;
-	imaginario= c.imaginario;
-return *this;
-}
-
-/********************* FUNCIONES MATEMATICAS ********************/
-
-/* devuelve el modulo del numero complejo */
 double complex::C_abs(){
 	return  sqrt(real * real + imaginario * imaginario);
 }
 
-
-/* devuelve el argumento del numero complejo */
 double complex::C_arg(){
 	if (real > 0) {
 		return atan(imaginario/real);
@@ -110,18 +102,21 @@ double complex::C_arg(){
 	return 0;
 }
 
-/* calcula la exponencial compleja */
 void complex::C_exp(const complex & c){
 	real = exp(c.real)*cos(c.imaginario);
 	imaginario = exp(c.real)*sin(c.imaginario);
 }
 
-/* calcula el logaritmo natural complejo */
 void complex::ln(complex c){
 	real = log(c.C_abs());
 	imaginario = c.C_arg();
 }
 
+complex& complex ::operator= (const complex & c){
+	real = c.real;
+	imaginario= c.imaginario;
+return *this;
+}
 
 
 

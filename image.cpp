@@ -31,34 +31,29 @@ image::image(const int &num_row, const int &num_col, const int &grey_scale){
         pixel_val[i] = new pixel [columns];
         for(int j = 0; j < columns; j++){
             (pixel_val[i][j]).setColor(0);
+        cout << (pixel_val[i][j]).getColor() << '\t';
         }
     }
 }
-
 /* constructor a partir de lo recibido por linea de comando */
 image::image(istream *is){
-	string hashtag;
-	/* primero se verifica si la imagen posee comentario */
+	char hashtag;
 	(*is) >> hashtag;
-	if (hashtag[0] == '#'){
-		 getline(*is,comment); // si tiene comentario se lo guarda
-		 comment = hashtag + comment;
-		 (*is) >> columns; // obtiene el tamaño de las columnas
-	}
-	 else{
-		 comment = '\0'; // si no tiene comentario guarda un "\0"
-		 columns = stoi(hashtag); //si no tiene comentarios, lo que leyó antes era el tamaño de las columnas
+	 if (hashtag == '#'){
+		 getline(*is,comment);
+		 (*is) >> columns;
 	 }
-
-	 (*is) >> rows >> greys; //guarda el valor de las  filas y de la escala grises
+	 else{
+		 comment = '\0';
+		 columns = hashtag;
+	 }
+	 (*is) >> rows >> greys; //guardo los valores de columna, fila y grises
 	 pixel_val = new pixel* [rows];  // pide memoria para las filas
 
 	 /*variables auxiliares */
 	 int color;
-	 /* se definen los saltos entre posiciones */
 	 double x = (double) 2/(columns-1);
 	 double y = (double) 2/(rows-1);
-
 	 complex x_position(x,0.0);
 	 complex y_position(0.0,y);
 	 complex init_position(-1, 1);
@@ -79,20 +74,17 @@ image::image(istream *is){
 /* constructor por copia */
 image::image(const image& old_image)
 {
-	/* copio los valores de la imagen pasada en la nueva imagen */
-	comment = old_image.comment;
     rows = old_image.rows;
     columns = old_image.columns;
     greys = old_image.greys;
-
-    pixel_val = new pixel* [rows]; // pide memoria para filas
+    pixel_val = new pixel* [rows];
 
 	for(int r = 0; r < rows; r++){
-		pixel_val[r] = new pixel [columns]; // pide memoria para columnas
+		pixel_val[r] = new pixel [columns];
 
 		for (int c = 0; c < columns; c++) {
-			 pixel_val[r][c].setColor(0); // se crea con todos los valores en 0 (color negro )
-			 pixel_val[r][c].setPosition(old_image.pixel_val[r][c].getPosition()); //se copian las posiciones de la imagen de origen
+			 pixel_val[r][c].setColor(0);
+			 pixel_val[r][c].setPosition(old_image.pixel_val[r][c].getPosition());
 		 }
 	 }
 }
@@ -111,21 +103,21 @@ image::~image()
     pixel_val = NULL;
 }
 
-/*  a partir del factor que elige el usuario, se elige que funcion se va a utilizar */
+
 void image::transformation(const image & origen, const function &factor){
-	if (factor == 0){ // en la posicion 0 esta la variable z
+	if (factor == 0){
 		this->id_z(origen);
 	}
-	else if (factor == 1){ // en la posicion 1 esta la variable exp_z
+	else if (factor == 1){
 		this->exp_z(origen);
 	}
-	else if (factor == 2){ // en la posicion 2 esta la variable ln_z
+	else if (factor == 2){
 		this->ln_z(origen);
 	}
-	else if(factor == 3){ // en la posicion 3 esta la variable add_exp_ln
+	else if(factor == 3){
 		this->add_exp_ln(origen);
 
-	} else if (factor == 4){ //en la posicion 4 esta la variable negate
+	} else if (factor == 4){
 		this->negateimage();
 	}
 	else{
@@ -136,83 +128,145 @@ void image::transformation(const image & origen, const function &factor){
 }
 
 
+void image::add_exp_ln(const image& old_image){
+     rows = old_image.rows;
+     columns = old_image.columns;
+     greys = old_image.greys;
 
+     image aux(old_image);
 
-/* funcion que calcula la multiplicacion de la imagen original por la matriz identidad */
+     this->exp_z(old_image);
+	 aux.ln_z(old_image);
+
+	 pixel_val = new pixel* [rows];
+
+		for(int r = 0; r < rows; r++){
+			pixel_val[r] = new pixel [columns];
+
+			for (int c = 0; c < columns; c++) {
+			pixel_val[r][c].setColor(pixel_val[r][c].getColor() + aux.pixel_val[r][c].getColor());
+			 }
+		 }
+
+}
+
 void image::id_z(const image& old_image)
 {
-	/* se copian los valores de la imagen original */
     rows = old_image.rows;
     columns = old_image.columns;
     greys = old_image.greys;
-
-    pixel_val = new pixel* [rows]; // se pide memoria para las filas
+    pixel_val = new pixel* [rows];
 
 	for(int r = 0; r < rows; r++){
-		pixel_val[r] = new pixel [columns]; //se pide memoria para las columnas
+		pixel_val[r] = new pixel [columns];
 
 		for (int c = 0; c < columns; c++) {
-			 pixel_val[r][c].setColor(old_image.pixel_val[r][c].getColor()); // se copia el color de cada pixel de la imagen original
+			 pixel_val[r][c].setColor(old_image.pixel_val[r][c].getColor());
+			 pixel_val[r][c].setPosition(old_image.pixel_val[r][c].getPosition());
 		 }
 	 }
 }
 
-/* se calcula el exponente complejo de cada posicion de los pixels de la imagen */
 void image::exp_z(const image & origen)
 {
-	/* variables auxiliares */
     complex new_value;
-    double minimum;
-
-   /* se inicializa el valor minimo con el que se correlaciona la distancia a una posicion */
+	double minimum;
     if (rows < columns){
-    	minimum = sqrt(2)/(rows-1);
+    	minimum = sqrt(2)*1.0/(rows-1);
     }
     else{
-    	minimum = sqrt(2)/(columns-1);
+    	minimum = sqrt(2)*1.0/(columns-1);
     }
 
-    /* recorre la matriz de salida */
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){
-        	new_value.C_exp(pixel_val[i][j].getPosition()); //calculo la exponencial compleja de cada posicion de la matriz de salida
+        	new_value.C_exp(pixel_val[i][j].getPosition());
             if(abs(new_value.getReal()) <= 1.0 && abs(new_value.getImag()) <= 1.0)
-            { //se corrobora que el valor obtenido entre en las dimensiones de la imagen
-            	double minimum_distance = minimum;
-            	double distance = 0;
-            	int f=-1,h=-1; // se inicializan negativos para no acceder a un lugar probable
+            {	
+			
+				double real_part = new_value.getReal();
+				double imag_part = new_value.getImag();
+				double distance1, distance2;
 
-            	if (new_value.getReal() >= 0 && new_value.getImag() > 0){ //chequea si el pixel esta en el primer cuadrante de la imagen
-            		for(int r = 0; r < origen.rows/2 && (minimum_distance >= minimum); r++){
-            			for (int c=origen.columns/2; c < origen.columns && (minimum_distance >= minimum) ; c++){
-            				// se recorre el cuadrante hasta que  se llegue al limite o la minima distancia
-            				// sea menor a la distancia seteada
-            				distance = (new_value - origen.pixel_val[r][c].getPosition()).C_abs();
-            				if(minimum_distance > distance){
-            					minimum_distance = distance; //si es menor, se actualiza la minima distancia
-            					f=r; //se guarda la posicion de dicha distancia
-            					h=c;
-            				}
-            			}
-            		}
-            	}
-            	/* se realiza el mismo procedimiento  en el 4to cuadrante */
-            	else if (new_value.getReal() >= 0 && new_value.getImag() <= 0){
+				int f=-1,h=-1;
+				int first_real, last_real, mid_real, first_imag, last_imag, mid_imag;
 
-            		for(int r = origen.rows/2; r < origen.rows && (minimum_distance >= minimum); r++){
-            			for (int c=origen.columns/2; c < origen.columns && (minimum_distance >= minimum); c++){
-            				distance = (new_value - origen.pixel_val[r][c].getPosition()).C_abs();
-            				if(minimum_distance > distance){
-            					minimum_distance = distance;
-            					f=r;
-            					h=c;
-            				}
-            			}
-            		}
-            	}
-            	/* si se encontro distancia minima, se guarda el color de esa posicion */
-            	if (f >= 0 && h >= 0) {
-            		pixel_val[i][j].setColor(origen.pixel_val[f][h].getColor());
+				first_imag = 0;
+				last_imag = rows - 1;
+				mid_imag = (first_imag + last_imag)/2;
+				while(first_imag<=last_imag)
+				{
+					if(origen.pixel_val[mid_imag][0].getPosition().getImag() > imag_part)
+					{
+						first_imag = mid_imag + 1;
+					}
+					else if (origen.pixel_val[mid_imag][0].getPosition().getImag() == imag_part)
+					{
+						f = mid_imag;
+						break;
+					}
+					else
+					{
+						last_imag = mid_imag - 1;
+					}
+					mid_imag = (first_imag + last_imag)/2;
+				}
+				if(first_imag>last_imag)
+				{
+					if (first_imag > (rows-1))
+					{
+						first_imag = first_imag - 1;
+					}
+					distance1 = abs(origen.pixel_val[first_imag][0].getPosition().getImag() - imag_part);
+					distance2 = abs(origen.pixel_val[last_imag][0].getPosition().getImag() - imag_part);
+					if(distance1<=distance2)
+					{
+						f = first_imag;
+					}
+					else
+					{
+						f = last_imag;
+					}
+					
+				}
+
+				first_real = 0;
+				last_real = columns - 1;
+				mid_real = (first_real + last_real)/2;
+				while(first_real<=last_real)
+				{
+					if(origen.pixel_val[0][mid_real].getPosition().getReal() < real_part)
+					{
+						first_real = mid_real + 1;
+					}
+					else if (origen.pixel_val[0][mid_real].getPosition().getReal() == real_part)
+					{
+						h = mid_real;
+						break;
+					}
+					else
+					{
+						last_real = mid_real - 1;
+					}
+					mid_real = (first_real + last_real)/2;
+				}
+				if(first_real>last_real)
+				{
+					distance1 = abs(origen.pixel_val[0][first_real].getPosition().getReal() - real_part);
+					distance2 = abs(origen.pixel_val[0][last_real].getPosition().getReal() - real_part);
+					if(distance1<=distance2)
+					{
+						h = first_real;
+					}
+					else
+					{
+						h = last_real;
+					}
+					
+				}
+
+				if (f >= 0 && h >= 0) {
+            	 	pixel_val[i][j].setColor(origen.pixel_val[f][h].getColor());
             	}
 
             }
@@ -229,109 +283,114 @@ void image::ln_z(const image & origen)
     double minimum;
     complex new_value;
     if (rows > columns){
-    	minimum = sqrt(2)/(rows-1);
+    	minimum = 2.0/(rows-1);
     }
     else{
-    	minimum = sqrt(2)/(columns-1);
+    	minimum = 2.0/(columns-1);
     }
 
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){
         	new_value.ln(pixel_val[i][j].getPosition());
             if(abs(new_value.getReal()) <= 1.0 && abs(new_value.getImag()) <= 1.0)
-            {
-            	double minimum_distance = minimum;
-            	double distance = 0;
-            	int f=-1,h=-1;
-            	if (new_value.getReal() < 0 && new_value.getImag() > 0){
-            				cout << "1" << endl;
-            		for(int r = 0; r < origen.rows/2 && (minimum_distance >= minimum); r++){
-            			for (int c=0; c < origen.columns/2  && (minimum_distance >= minimum); c++){
-            				distance = (new_value - origen.pixel_val[r][c].getPosition()).C_abs();
-            				if(minimum_distance > distance ){
-            					minimum_distance = distance;
-            					f=r;
-            					h=c;
+            {	
+				double real_part = new_value.getReal();
+				double imag_part = new_value.getImag();
+				double distance1, distance2;
 
-            				}
-            			}
-            		}
+				//cout << real_part << endl;
+				//cout << imag_part << endl;
+
+				int f=-1,h=-1;
+				int first_real, last_real, mid_real, first_imag, last_imag, mid_imag;
+
+				first_imag = 0;
+				last_imag = rows - 1;
+				mid_imag = (first_imag + last_imag)/2;
+				while(first_imag<=last_imag)
+				{
+					//cout << mid_imag << endl;
+					if(origen.pixel_val[mid_imag][0].getPosition().getImag() > imag_part)
+					{
+						first_imag = mid_imag + 1;
+					}
+					else if (origen.pixel_val[mid_imag][0].getPosition().getImag() == imag_part)
+					{
+						f = mid_imag;
+						break;
+					}
+					else
+					{
+						last_imag = mid_imag - 1;
+					}
+					mid_imag = (first_imag + last_imag)/2;
+				}
+				if(first_imag>last_imag)
+				{
+					if (first_imag > (rows-1))
+					{
+						first_imag = first_imag - 1;
+					}
+					distance1 = abs(origen.pixel_val[first_imag][0].getPosition().getImag() - imag_part);
+					distance2 = abs(origen.pixel_val[last_imag][0].getPosition().getImag() - imag_part);
+					if(distance1<=distance2)
+					{
+						f = first_imag;
+					}
+					else
+					{
+						f = last_imag;
+					}
+					
+				}
+
+				first_real = 0;
+				last_real = columns - 1;
+				mid_real = (first_real + last_real)/2;
+				while(first_real<=last_real)
+				{
+					if(origen.pixel_val[0][mid_real].getPosition().getReal() < real_part)
+					{
+						first_real = mid_real + 1;
+					}
+					else if (origen.pixel_val[0][mid_real].getPosition().getReal() == real_part)
+					{
+						h = mid_real;
+						break;
+					}
+					else
+					{
+						last_real = mid_real - 1;
+					}
+					mid_real = (first_real + last_real)/2;
+				}
+				if(first_real>last_real)
+				{
+					distance1 = abs(origen.pixel_val[0][first_real].getPosition().getReal() - real_part);
+					distance2 = abs(origen.pixel_val[0][last_real].getPosition().getReal() - real_part);
+					if(distance1<=distance2)
+					{
+						h = first_real;
+					}
+					else
+					{
+						h = last_real;
+					}
+					
+				}
+
+				if (f >= 0 && h >= 0) {
+					//cout << f << ' ' << h << endl;
+            	 	pixel_val[i][j].setColor(origen.pixel_val[f][h].getColor());
             	}
-            	if (new_value.getReal() >= 0 && new_value.getImag() > 0){
-    				cout << "2" << endl;
 
-            		for(int r = 0; r < origen.rows/2 && (minimum_distance >= minimum); r++){
-            			for (int c=origen.columns/2; c < origen.columns && (minimum_distance >= minimum); c++){
 
-            				distance = (new_value - origen.pixel_val[r][c].getPosition()).C_abs();
-            				if(minimum_distance > distance ){
-            					minimum_distance = distance;
-            					f=r;
-            					h=c;
-
-            				}
-            			}
-            		}
-            	}
-            	if (new_value.getReal() < 0 && new_value.getImag() <= 0){
-    				cout << "3" << endl;
-
-            		for(int r = origen.rows/2; r < origen.rows && (minimum_distance >= minimum); r++){
-            			for (int c=0; c < origen.columns/2  && (minimum_distance >= minimum); c++){
-
-            				distance = (new_value - origen.pixel_val[r][c].getPosition()).C_abs();
-            				if(minimum_distance > distance){
-            					minimum_distance = distance;
-            					f=r;
-            					h=c;
-
-            				}
-            			}
-            		}
-            	}
-            	if (new_value.getReal() >= 0 && new_value.getImag() <= 0){
-    				cout << "4" << endl;
-
-            		for(int r = origen.rows/2; r < origen.rows && (minimum_distance >= minimum); r++){
-            			for (int c=origen.columns/2; c < origen.columns  && (minimum_distance >= minimum); c++){
-
-            				distance = (new_value - origen.pixel_val[r][c].getPosition()).C_abs();
-            				if(minimum_distance > distance ){
-            					minimum_distance = distance;
-            					f=r;
-            					h=c;
-
-            				}
-            			}
-            		}
-            	}
-            	if (f >= 0 && h >= 0) {
-            		pixel_val[i][j].setColor(origen.pixel_val[f][h].getColor());
-            	}
             }
-
         }
     }
 
 }
 
-void image::add_exp_ln(const image& old_image){
-     rows = old_image.rows;
-     columns = old_image.columns;
-     greys = old_image.greys;
-
-     image aux(old_image);
-
-     this->exp_z(old_image);
-	 aux.ln_z(old_image);
-
-		for(int r = 0; r < rows; r++){
-			for (int c = 0; c < columns; c++) {
-			pixel_val[r][c].setColor(pixel_val[r][c].getColor() + aux.pixel_val[r][c].getColor());
-			 }
-		 }
-
-}
 
 void image::negateimage()
 {
@@ -350,7 +409,7 @@ void image::negateimage()
 
 void image::export_to_file(ostream *os){
 	(*os) << "P2" <<endl;
-	(*os) << comment <<endl;
+	(*os) << "# " << comment <<endl;
 	(*os) << columns << " " << rows << endl;
 	(*os) << greys << endl;
 
@@ -363,51 +422,52 @@ void image::export_to_file(ostream *os){
 
 }
 
-
-/******************* GETTERS AND SETTERS*********************/
-
-/* se setean las variables de la imagen */
-void image::setimage( int &num_rows,  int &num_cols,  int &grey_scale){
+void image::setimage( int &num_rows,  int &num_cols,  int &grey_scale)
+{
     rows = num_rows;
     columns = num_cols;
     greys = grey_scale;
 }
 
-/* se obtienen los valores de la imagen */
-void image::getimage(int &num_rows,  int &num_cols,  int &grey_scale){
+/**
+ * returns the number of rows, columns and gray levels
+ */
+void image::getimage(int &num_rows,  int &num_cols,  int &grey_scale)
+{
     num_rows = rows;
     num_cols = columns;
     grey_scale = greys;
+
 }
 
-/* se setea la cantidad de filas */
 void image::setRows(const int &num_rows){
 		rows = num_rows;
 }
-/* se obtiene la cantidad de filas */
+
+void image::setColumns(const int &num_columns){
+	columns = num_columns;
+}
+
+void image::setGreys(const int &grey_scale){
+	 greys = grey_scale;
+}
+
+
 int& image::getRows(){
 	return rows;
 }
 
-
-/* se setea la cantidad de columnas */
-void image::setColumns(const int &num_columns){
-	columns = num_columns;
-}
-/* se obtiene la cantidad de columnas */
 int& image::getColumns(){
 	return columns;
 }
 
-/* se setea la cantidad de grises */
-void image::setGreys(const int &grey_scale){
-	 greys = grey_scale;
-}
-/* se obtiene la cantidad de grises */
 int& image::getGreys(){
 	return greys;
 }
 
+/**
+ * returns the gray value of a specific pixel
+ */
 
 int image::getPixelColor(const int num_row, const int num_col)
 {
@@ -418,9 +478,92 @@ int image::getPixelColor(const int num_row, const int num_col)
 
     return pixel_val[num_row][num_col].getColor();
 }
+/**
+ * sets the gray value of a specific pixel
+ *
+void image::setPixelColor(int row, int col, int value)
+{
+    pixel_val[row][col] = value;
+}
+*/
+/**
+ * checks to see if a pixel is within the image, returns true or false
+
+bool image::inBounds(int row, int col)
+{
+    if(row >= rows || row < 0 || col >=columns || col < 0)
+        return false;
+    //else
+    return true;
+}
+*/
 
 
 
 
 
 
+/**
+ * negates image
+ *
+void image::negateimage(image& old_image)
+{
+    int rows, cols, gray;
+     = N;
+    cols = M;
+    gray = Q;
+
+    image tempimage(N,M,Q);
+
+    for(int i = 0; i < rows; i++)
+    {
+        for(int j = 0; j < cols; j++)
+            tempimage.pixelVal[i][j] = -(pixelVal[i][j]) + 255;
+    }
+
+    old_image = tempimage;
+}
+ */
+
+/**
+ * based on users input and rotates it around the center of the image
+ **/
+/*void image::rotateimage(int theta, image& old_image)
+    {
+        int r0, c0;
+        int r1, c1;
+        int rows, cols;
+        rows = old_image.N;
+        cols = old_image.M;
+        image tempimage(rows, cols, old_image.Q);
+
+        float rads = (theta * 3.14159265)/180.0;
+
+        r0 = rows / 2;
+        c0 = cols / 2;
+
+        for(int r = 0; r < rows; r++)
+        {
+        for(int c = 0; c < cols; c++)
+        {
+            r1 = (int) (r0 + ((r - r0) * cos(rads)) - ((c - c0) * sin(rads)));
+            c1 = (int) (c0 + ((r - r0) * sin(rads)) + ((c - c0) * cos(rads)));
+
+            if(inBounds(r1,c1))
+            {
+                tempimage.pixelVal[r1][c1] = old_image.pixelVal[r][c];
+            }
+        }
+        }
+
+        for(int i = 0; i < rows; i++)
+        {
+        for(int j = 0; j < cols; j++)
+        {
+            if(tempimage.pixelVal[i][j] == 0)
+                tempimage.pixelVal[i][j] = tempimage.pixelVal[i][j+1];
+        }
+        }
+        old_image = tempimage;
+    }
+   */

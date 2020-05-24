@@ -209,15 +209,24 @@ multiply(istream *is, ostream *os)
 }
 
 
-/* valida que la imagen sea del tipo P2 */
-void validate_img_format(){
+int validate_img_format(){
 	 string input_line;
-	 getline(*iss,input_line);// lee la primera linea : P2
-	 if(input_line[0] != 'P' || input_line[1] != '2') {
+	 getline(*iss,input_line);// read the first line : P2
+
+	 if(input_line[0] != 'P' && input_line[1] != '2') {
 		   cerr << "Error: Invalid image format" <<endl;
 		  exit(1);
 	 }
+	return 0;
 }
+
+string get_img_comment(){
+	string input_line;
+	getline(*iss,input_line);// read the second line : comment
+	return input_line;
+}
+
+
 
 
 int main(int argc, char * const argv[])
@@ -226,31 +235,27 @@ int main(int argc, char * const argv[])
 	cmdline cmdl(options);	// Objeto con parametro tipo option_t (struct) declarado globalmente. Ver línea 51 main.cc
 	cmdl.parse(argc, argv); // Metodo de parseo de la clase cmdline
 
-
-	/***************************************************/
-	/* utilizado para calcular el tiempo de ejecucion */
 	unsigned t0, t1;
+
 	t0=clock();
-	/***************************************************/
 
-	/* valido que la imagen sea la adecuada */
-	validate_img_format();
+	if (validate_img_format() != 0){
+		exit(1);
+	}
 
-	image img_origin(iss); // crea la imagen a partir de lo que lee por cmdline
-	image img_destin(img_origin); // crea la imagen de salida copiando la de entrada
+	image img_origin(iss);
+	image img_destin(img_origin);
 
-	img_destin.transformation(img_origin , factor);  // se elige que funcion se aplicará a partir del valor de factor
+	img_destin.transformation(img_origin , factor);
 
-	img_destin.export_to_file(oss); // se guarda el archivo en  la imagen de salida
+	img_destin.export_to_file(oss);
+
 
 	multiply(iss, oss);	    // Función externa, no es un metodo de ninguna clase o estructura usada en el código
-
-	/***************************************************/
-	/* utilizado para calcular el tiempo de ejecucion */
+	// Code to execute
 	t1 = clock();
 
 	double time = (double(t1-t0)/CLOCKS_PER_SEC);
 	cout << "Execution Time: " << time << endl;
-	/***************************************************/
 
 }

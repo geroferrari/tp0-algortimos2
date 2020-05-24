@@ -10,8 +10,7 @@
 #include <string>
 #include "pixel.h"
 
-/* tipo enumerativo para elegir que funcion se le aplicara a la imagen */
-/* la variable global "factor" declarada en el main es de tipo enumerativo "function" */
+
 enum function {
 	z,
 	exp_z,
@@ -20,20 +19,20 @@ enum function {
 	negative
 };
 
-
 class image {
  public:
     /******************** CONSTRUCTORES ************************/
-    image(); //constructor por defecto
-    image(const int &, const int &, const int &); //constructor a partir del tamaño y cantidad de colores
-    image(const image &); //constructor por copia
-    image(istream *); //constructor a partir de lo que lee de cmdline
+    image();
+    image(const int &, const int &, const int &);
+    image(const image &);
+    image(istream *);
 
     /******************** DESTRUCTOR ************************/
     ~image();
 
 
-    /******************* GETTERS AND SETTERS*********************/
+    /************************METODOS************************/
+    /* GETTERS AND SETTERS */
     void setimage( int &,  int &,  int &); // setea parametros imagen
     void getimage( int &,  int &,  int &); // obtiene parametros imagen
 
@@ -49,24 +48,33 @@ class image {
 
 
 
-    /****************** FUNCIONES MATEMATICAS  **********************/
-    void exp_z(const image&); // calcula la exponencial de los elementos de la imagen original
- 	void id_z(const image&); // calcula el producto de la imagen original por la identidad
- 	void ln_z(const image&); // calcula el logaritmo natural de los elementos de la imagen original
- 	void add_exp_ln(const image&); // suma el resultado de aplicar el ln y la exp.
+    /* SOBRECARGA OPERADORES */
+    void operator=(const image&); // sobre carga operador=
+    image operator*(const int &); // sobre carga operador *
 
- 	/******************* OTROS **************************************/
+
+    /* OTROS */
+    void exp_z(const image&); // calcula la exponencial de los elementos de la matriz
     void export_to_file(ostream *); //imprime la imagen en un archivo
- 	void negateimage(); // invierte los colores de la imagen
- 	void transformation(const image&, const function &); //elige que funcion se va a utilizar
+ 	void transformation(const image&, const function &);
+ 	void id_z(const image&);
+ 	void ln_z(const image&);
+ 	void add_exp_ln(const image&);
+ 	void negateimage( );
 
+    /*funcion para rotar la imagen
+    void rotateimage(int theta, image& old_image);
+     bool inBounds(int , int );
+    void negateimage(image& old_image);
+	*/
 
  private :
- 	string comment; // comentario al inicio de la imagen
+ 	string comment;
     int rows; // numero de filas
     int columns; // numero de columnas
     int greys; // numero de grises
     pixel ** pixel_val;
-};
 
+
+};
 #endif /* image_H_ */
