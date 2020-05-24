@@ -138,15 +138,11 @@ void image::add_exp_ln(const image& old_image){
      this->exp_z(old_image);
 	 aux.ln_z(old_image);
 
-	 pixel_val = new pixel* [rows];
-
-		for(int r = 0; r < rows; r++){
-			pixel_val[r] = new pixel [columns];
-
-			for (int c = 0; c < columns; c++) {
-			pixel_val[r][c].setColor(pixel_val[r][c].getColor() + aux.pixel_val[r][c].getColor());
-			 }
+	 for(int r = 0; r < rows; r++){
+		 for (int c = 0; c < columns; c++) {
+		 	pixel_val[r][c].setColor(pixel_val[r][c].getColor() + aux.pixel_val[r][c].getColor());
 		 }
+	 }
 
 }
 
@@ -155,11 +151,8 @@ void image::id_z(const image& old_image)
     rows = old_image.rows;
     columns = old_image.columns;
     greys = old_image.greys;
-    pixel_val = new pixel* [rows];
 
 	for(int r = 0; r < rows; r++){
-		pixel_val[r] = new pixel [columns];
-
 		for (int c = 0; c < columns; c++) {
 			 pixel_val[r][c].setColor(old_image.pixel_val[r][c].getColor());
 			 pixel_val[r][c].setPosition(old_image.pixel_val[r][c].getPosition());
@@ -170,13 +163,6 @@ void image::id_z(const image& old_image)
 void image::exp_z(const image & origen)
 {
     complex new_value;
-	double minimum;
-    if (rows < columns){
-    	minimum = sqrt(2)*1.0/(rows-1);
-    }
-    else{
-    	minimum = sqrt(2)*1.0/(columns-1);
-    }
 
     for(int i = 0; i < rows; i++){ //Hace una busqueda binaria para reales e imaginarios, para cada pixel
         for(int j = 0; j < columns; j++){
@@ -282,14 +268,7 @@ void image::exp_z(const image & origen)
 
 void image::ln_z(const image & origen)
 {
-    double minimum;
     complex new_value;
-    if (rows > columns){
-    	minimum = 2.0/(rows-1);
-    }
-    else{
-    	minimum = 2.0/(columns-1);
-    }
 
     for(int i = 0; i < rows; i++){ // Se realiza busqueda binaria similar a la de la exponencial
         for(int j = 0; j < columns; j++){
@@ -391,7 +370,6 @@ void image::ln_z(const image & origen)
 
 void image::negateimage()
 {
-
     for(int i = 0; i < rows; i++)
     {
         for(int j = 0; j < columns; j++)
