@@ -401,7 +401,6 @@ void image::export_to_file(ostream *os){
           }
           (*os) << endl;
     }
-
 }
 
 void image::setimage( int &num_rows,  int &num_cols,  int &grey_scale)

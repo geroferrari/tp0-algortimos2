@@ -112,7 +112,7 @@ opt_output(string const &arg)
 	if (arg == "-") {
 		oss = &cout;	// Establezco la salida estandar cout como flujo de salida
 	} else {
-		ofs.open(arg.c_str(), ios::out);
+		ofs.open(arg.c_str(), ios::out | ios::binary);
 		oss = &ofs;
 	}
 
@@ -184,12 +184,6 @@ opt_help(string const &arg)
 void
 multiply(istream *is, ostream *os)
 {
-	int num;
-
-	while (*is >> num) {
-		*os << num * factor
-		    << "\n";
-	}
 
 	if (os->bad()) {
 		cerr << "cannot write to output stream."
@@ -209,7 +203,7 @@ multiply(istream *is, ostream *os)
 }
 
 
-int validate_img_format(){
+void validate_img_format(){
 	 string input_line;
 	 getline(*iss,input_line);// read the first line : P2
 
@@ -217,7 +211,6 @@ int validate_img_format(){
 		   cerr << "Error: Invalid image format" <<endl;
 		  exit(1);
 	 }
-	return 0;
 }
 
 string get_img_comment(){
@@ -239,19 +232,17 @@ int main(int argc, char * const argv[])
 
 	t0=clock();
 
-	if (validate_img_format() != 0){
-		exit(1);
-	}
+	validate_img_format();
 
 	image img_origin(iss);
 	image img_destin(img_origin);
+
+	//multiply(iss, oss);	    // Función externa, no es un metodo de ninguna clase o estructura usada en el código
 
 	img_destin.transformation(img_origin , factor);
 
 	img_destin.export_to_file(oss);
 
-
-	multiply(iss, oss);	    // Función externa, no es un metodo de ninguna clase o estructura usada en el código
 	// Code to execute
 	t1 = clock();
 
