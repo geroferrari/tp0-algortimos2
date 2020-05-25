@@ -12,13 +12,13 @@ main.o: main.cpp
 cmdline.o: cmdline.cpp cmdline.h
 	$(CXX) $(CXXFLAGS) -c cmdline.cpp -o cmdline.o
 
-pixel.o: pixel.cpp pixel.h 
+pixel.o: pixel.cpp pixel.h complex.h
 	$(CXX) $(CXXFLAGS) -c pixel.cpp -o pixel.o
 
 complex.o: complex.cpp complex.h
 	$(CXX) $(CXXFLAGS) -c complex.cpp -o complex.o
 
-image.o:  image.cpp image.h 
+image.o:  image.cpp image.h pixel.h complex.h
 	$(CXX) $(CXXFLAGS) -c image.cpp -o image.o
 
 clean:
