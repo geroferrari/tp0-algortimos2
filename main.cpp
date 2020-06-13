@@ -153,20 +153,20 @@ opt_factor(string const &arg)
 	}
 
 	if(aux == "z"){
-		factor = z;
-	} else if (aux == "exp_z"){
-		factor = exp_z;
-	} else if (aux == "ln_z"){
-		factor = ln_z;
-	} else if (aux == "exp_add_ln"){
-		factor = exp_add_ln;
-	} else if (aux == "negative"){
-		factor = negative;
+		factor = Z;
+	} else if (aux == "exp(z)"){
+		factor = EXP;
+	} else if (aux == "ln(z)"){
+		factor = LN;
+	} else if (aux == "exp(z)+ln(z)"){
+		factor = EXP_LN;
+	} else if (aux == "-z"){
+		factor = NEGATIVE;
 	} else {
 		cerr << "non-defined function: "
 		     << arg
 		     << "."
-			 << " candidates are z, exp_z, ln_z, exp_add_ln, negative"
+			 << " candidates are z, exp(z), ln(z), exp(z)+ln(z), -z"
 		     << endl;
 		    exit(1);
 	}

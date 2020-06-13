@@ -129,19 +129,19 @@ image::~image()
 
 
 void image::transformation(const image & origen, const function &factor){
-	if (factor == "z"){
+	if (factor == Z){
 		this->id_z(origen);
 	}
-	else if (factor == "exp_z"){
+	else if (factor == EXP){
 		this->exp_z(origen);
 	}
-	else if (factor == "ln_z"){
+	else if (factor == LN){
 		this->ln_z(origen);
 	}
-	else if(factor == "exp_add_ln"){
+	else if(factor == EXP_LN){
 		this->add_exp_ln(origen);
 
-	} else if (factor == "negative"){
+	} else if (factor == NEGATIVE){
 		this->negate_image(origen);
 	}
 	else{
@@ -392,7 +392,7 @@ void image::ln_z(const image & origen)
 }
 
 
-void image::negateimage(const image &origen)
+void image::negate_image(const image &origen)
 {
     for(int i = 0; i < rows; i++)
     {
@@ -421,7 +421,7 @@ void image::export_to_file(ostream *os){
     }
 }
 
-void image::setimage( int &num_rows,  int &num_cols,  int &grey_scale)
+void image::set_image( int &num_rows,  int &num_cols,  int &grey_scale)
 {
     rows = num_rows;
     columns = num_cols;
@@ -431,7 +431,7 @@ void image::setimage( int &num_rows,  int &num_cols,  int &grey_scale)
 /**
  * returns the number of rows, columns and gray levels
  */
-void image::getimage(int &num_rows,  int &num_cols,  int &grey_scale)
+void image::get_image(int &num_rows,  int &num_cols,  int &grey_scale)
 {
     num_rows = rows;
     num_cols = columns;
@@ -439,28 +439,28 @@ void image::getimage(int &num_rows,  int &num_cols,  int &grey_scale)
 
 }
 
-void image::setRows(const int &num_rows){
+void image::set_rows(const int &num_rows){
 		rows = num_rows;
 }
 
-void image::setColumns(const int &num_columns){
+void image::set_columns(const int &num_columns){
 	columns = num_columns;
 }
 
-void image::setGreys(const int &grey_scale){
+void image::set_greys(const int &grey_scale){
 	 greys = grey_scale;
 }
 
 
-int& image::getRows(){
+int& image::get_rows(){
 	return rows;
 }
 
-int& image::getColumns(){
+int& image::get_columns(){
 	return columns;
 }
 
-int& image::getGreys(){
+int& image::get_greys(){
 	return greys;
 }
 
@@ -468,7 +468,7 @@ int& image::getGreys(){
  * returns the gray value of a specific pixel
  */
 
-int image::getPixelColor(const int num_row, const int num_col)
+int image::get_pixel_color(const int num_row, const int num_col)
 {
 	if ((rows < num_row) || (columns < num_col)){
 		cerr << "error: very long rows or columns" <<endl;

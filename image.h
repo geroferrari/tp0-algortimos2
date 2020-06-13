@@ -11,11 +11,11 @@
 using namespace std;
 
 enum function {
-	z,
-	exp_z,
-	ln_z,
-	exp_add_ln,
-	negative
+	Z,
+	EXP,
+	LN,
+	EXP_LN,
+	NEGATIVE
 };
 
 class image {
