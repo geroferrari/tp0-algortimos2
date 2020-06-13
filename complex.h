@@ -1,12 +1,11 @@
 /*
  * complex.h
  *
- *  Created on: 10 may. 2020
- *      Author: gerof
  */
 
 #ifndef complex_INCLUDED
 #define complex_INCLUDED
+
 
 class complex {
 private:
@@ -16,22 +15,32 @@ private:
 public:
 	/*CONSTRUCTORES */
 	complex();
-	complex(double , double );
+	complex(const double &, const double &);
 	complex(const complex &);
 
 	/*DESTRUCTOR */
 	~complex() ;
 
 	/*FUNCIONES */
-	double getReal();
-	double getImag() ;
+	double get_real();
+	double get_imag() ;
 
-	void setReal(double);
-	void setImag(double);
+	void set_real(const double &);
+	void set_imag(const double &);
 
-	complex sumar (const complex &);
-	complex sumar (double);
+	double c_abs();
+	double c_arg();
+	void c_exp(const complex &);
+	void ln(complex);
+
+	complex operator*(const double &);
+	complex operator*(const complex &);
+	complex operator*(const int &);
+	complex operator+(const complex &);
+	complex operator-(const complex &);
 	complex& operator = (const complex &);
+
+
 };
 
 #endif

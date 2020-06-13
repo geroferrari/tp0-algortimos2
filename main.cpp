@@ -11,8 +11,14 @@
 #include <sstream>
 #include <cstdlib>
 #include <string>
+#include <iostream>
+#include <ctime>
+
 
 #include "cmdline.h"
+#include "image.h"
+#include "complex.h"
+#include "pixel.h"
 
 
 using namespace std;
@@ -58,7 +64,7 @@ static option_t options[] = {
 	{0, },
 };
 
-static int factor;
+static function factor;
 static istream *iss = 0;	// Input Stream (clase para manejo de los flujos de entrada)
 static ostream *oss = 0;	// Output Stream (clase para manejo de los flujos de salida)
 static fstream ifs; 		// Input File Stream (derivada de la clase ifstream que deriva de istream para el manejo de archivos)
@@ -106,7 +112,7 @@ opt_output(string const &arg)
 	if (arg == "-") {
 		oss = &cout;	// Establezco la salida estandar cout como flujo de salida
 	} else {
-		ofs.open(arg.c_str(), ios::out);
+		ofs.open(arg.c_str(), ios::out | ios::binary);
 		oss = &ofs;
 	}
 
@@ -125,13 +131,13 @@ static void
 opt_factor(string const &arg)
 {
 	istringstream iss(arg);
-
+	string aux;
 	// Intentamos extraer el factor de la línea de comandos.
 	// Para detectar argumentos que únicamente consistan de
 	// números enteros, vamos a verificar que EOF llegue justo
 	// después de la lectura exitosa del escalar.
 	//
-	if (!(iss >> factor)
+	if (!(iss >> aux)
 	    || !iss.eof()) {
 		cerr << "non-integer factor: "
 		     << arg
@@ -145,6 +151,27 @@ opt_factor(string const &arg)
 		     << endl;
 		exit(1);
 	}
+
+	if(aux == "z"){
+		factor = z;
+	} else if (aux == "exp_z"){
+		factor = exp_z;
+	} else if (aux == "ln_z"){
+		factor = ln_z;
+	} else if (aux == "exp_add_ln"){
+		factor = exp_add_ln;
+	} else if (aux == "negative"){
+		factor = negative;
+	} else {
+		cerr << "non-defined function: "
+		     << arg
+		     << "."
+			 << " candidates are z, exp_z, ln_z, exp_add_ln, negative"
+		     << endl;
+		    exit(1);
+	}
+
+
 }
 
 static void
@@ -155,8 +182,7 @@ opt_help(string const &arg)
 	exit(0);
 }
 
-void
-multiply(istream *is, ostream *os)
+void validate_files(istream *is, ostream *os)
 {
 	int num;
 
@@ -182,50 +208,37 @@ multiply(istream *is, ostream *os)
 	}
 }
 
+
+void validate_img_format(){
+	 string input_line;
+	 getline(*iss,input_line);// read the first line : P2
+
+	 if(input_line[0] != 'P' || input_line[1] != '2') {
+		   cerr << "Error: Invalid image format" <<endl;
+		  exit(1);
+	 }
+}
+
 int main(int argc, char * const argv[])
 {
+
 	cmdline cmdl(options);	// Objeto con parametro tipo option_t (struct) declarado globalmente. Ver línea 51 main.cc
 	cmdl.parse(argc, argv); // Metodo de parseo de la clase cmdline
-	const string magic_number = "P2";
 
-	 string str;
-	 int a = sizeof (*iss >> str);
+	/* valido que la imagen sea la adecuada */
+	validate_img_format();
 
-	 int row =0, col =0, num_of_rows =0, num_of_cols =0, bits;
-	    stringstream ss;
-	    string inputLine;
+	image img_origin(iss); // crea la imagen a partir de lo que lee por cmdline
 
-	    getline(*iss,inputLine);// read the first line : P2
+	validate_files(iss, oss);	    // Función externa, no es un metodo de ninguna clase o estructura usada en el código
 
+	image img_destin(img_origin); // crea la imagen de salida copiando la de entrada
 
+	img_destin.transformation(img_origin , factor);  // se elige que funcion se aplicará a partir del valor de factor
 
-	    if(inputLine[0] != 'P' && inputLine[1] != '2') {
-	    	cerr <<"Version error"<< endl;
-	    }
-	    cout <<"Version : "<< inputLine  << endl;
-
-	    getline(*iss,inputLine);// read the second line : comment
-	    cout <<"Comment : "<< inputLine << endl;
-
-	   //read the third line : width and height
-	    (*iss) >> num_of_cols >> num_of_rows;
-	    cout << num_of_cols <<" columns and "<< num_of_rows <<" rows"<< endl;
-
-
-	    int array[num_of_rows][num_of_cols];
-
-	    // Following lines : data
-	    for(row = 0; row < num_of_rows; ++row)
-	      for (col = 0; col < num_of_cols; ++col) *iss >> array[row][col];
-
-	    // Now print the array to see the result
-	    for(row = 0; row < num_of_rows; ++row) {
-	      for(col = 0; col < num_of_cols; ++col) {
-	        cout << array[row][col] << " ";
-	      }
-	      cout << endl;
-	    }
-	multiply(iss, oss);	    // Función externa, no es un metodo de ninguna clase o estructura usada en el código
+	img_destin.export_to_file(oss); // se guarda el archivo en  la imagen de salida
 
 
 }
+
+
